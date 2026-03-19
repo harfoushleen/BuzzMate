@@ -1,0 +1,150 @@
+CREATE DATABASE BuzzMateDB;
+USE BuzzMateDB;
+-- Users table (added email for registration/login)
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    gender ENUM('male','female','other') NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    occupation VARCHAR(100),
+    Dating_preference ENUM('casual','long term','unsure') DEFAULT 'unsure',
+    Address VARCHAR(255),
+    Phone_Number VARCHAR(20),
+    profile_pic_url TEXT,
+    Privacy_Setting ENUM('public','private') DEFAULT 'public',
+    account_status ENUM('active','banned') DEFAULT 'active',
+    report_count INT DEFAULT 0,
+    google_access_token TEXT,
+    google_refresh_token TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_status (account_status)
+);
+
+-- Blocks
+CREATE TABLE Blocks (
+    block_id INT AUTO_INCREMENT PRIMARY KEY,
+    blocker_id INT NOT NULL,
+    blocked_id INT NOT NULL,
+    UNIQUE KEY unique_block (blocker_id, blocked_id),
+    FOREIGN KEY (blocker_id) REFERENCES Users(user_id),
+    FOREIGN KEY (blocked_id) REFERENCES Users(user_id)
+);
+
+-- Reports (trigger increments report_count)
+CREATE TABLE Reports (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    reporter_id INT NOT NULL,
+    reported_id INT NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_report (reporter_id, reported_id),
+    FOREIGN KEY (reporter_id) REFERENCES Users(user_id),
+    FOREIGN KEY (reported_id) REFERENCES Users(user_id)
+);
+
+DELIMITER $$
+CREATE TRIGGER increment_report_count AFTER INSERT ON Reports
+FOR EACH ROW
+BEGIN
+    UPDATE Users SET report_count = report_count + 1 WHERE user_id = NEW.reported_id;
+END$$
+DELIMITER ;
+
+-- Preferences (filters for discovery)
+CREATE TABLE Preferences (
+    preference_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    min_age INT DEFAULT 18,
+    max_age INT DEFAULT 99,
+    max_distance INT DEFAULT 50, -- miles/km
+    preferred_gender ENUM('male','female','other','any') DEFAULT 'any',
+    Date_Mood ENUM('casual','romantic','adventurous','unsure') DEFAULT 'unsure',
+    max_price_tier INT DEFAULT 3,
+    opener VARCHAR(140),
+    Hobbies TEXT, -- comma-separated or JSON
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    UNIQUE KEY (user_id)
+);
+
+-- Interactions (swipes)
+CREATE TABLE Interactions (
+    interaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    action_type ENUM('like','dislike') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY (sender_id,receiver_id), --use INSERT IGNORE when inserting
+    FOREIGN KEY (sender_id) REFERENCES Users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES Users(user_id),
+    INDEX idx_sender_receiver (sender_id, receiver_id)
+);
+
+-- Matches
+CREATE TABLE Matches (
+    match_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_1_id INT NOT NULL,
+    user_2_id INT NOT NULL,
+    status ENUM('active','unmatched') DEFAULT 'active',
+    matched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_1_id) REFERENCES Users(user_id),
+    FOREIGN KEY (user_2_id) REFERENCES Users(user_id),
+    UNIQUE KEY unique_match (user_1_id, user_2_id),
+    INDEX idx_users (user_1_id, user_2_id)
+);
+
+-- Discover Suggestions (weekly batch)
+CREATE TABLE Discover_Suggestions (
+    suggestion_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    candidate_ids JSON NOT NULL,
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP DEFAULT (DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 WEEK)), 
+    UNIQUE KEY ux_user (user_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Locations (predefined date spots)
+CREATE TABLE Locations (
+    location_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100),
+    price_tier INT,
+    address VARCHAR(255),
+    coords POINT, -- SRID 4326 for GPS
+    SPATIAL INDEX (coords)
+);
+
+-- Suggested Dates (generated per match)
+CREATE TABLE Suggested_Dates (
+    suggestion_id INT AUTO_INCREMENT PRIMARY KEY,
+    match_id INT NOT NULL,
+    location_id INT NOT NULL,
+    status ENUM('suggested','accepted_by_user_1','accepted_by_user_2','accepted_by_both') DEFAULT 'suggested',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (match_id) REFERENCES Matches(match_id),
+    FOREIGN KEY (location_id) REFERENCES Locations(location_id),
+    INDEX idx_match (match_id)
+);
+
+-- Conversations (one per match)
+CREATE TABLE Conversations (
+    conversation_id INT AUTO_INCREMENT PRIMARY KEY,
+    match_id INT NOT NULL,
+    last_message_preview TEXT,
+    FOREIGN KEY (match_id) REFERENCES Matches(match_id),
+    UNIQUE KEY (match_id)
+);
+
+-- Messages
+CREATE TABLE Messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    conversation_id INT NOT NULL,
+    sender_id INT NOT NULL,
+    message_body TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conversation_id) REFERENCES Conversations(conversation_id),
+    FOREIGN KEY (sender_id) REFERENCES Users(user_id),
+    INDEX idx_conversation (conversation_id, created_at)
+);
