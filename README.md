@@ -109,3 +109,22 @@ single backend deployment
 - **CHATTING SYSTEM**:  WebSocket (Socket.IO on Node)
 - **BACKEND:**  Node.js with TypeScript — NestJS
 - **Primary database:**  Relational DB: MySQL
+### Setup:
+-	`npm install`
+-	`npm install class-validator class-transformer @nestjs/mapped-types lru-cache@^7`
+-	`npm run build`
+
+for google calendar:
+
+-Install Google client library for Python:
+
+`python3 -m pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib`
+
+you can use MySQL Workbench to act as a server for the BuzzMateDB
+
+then:
+
+From the project root (c:....\BuzzMate):
+`npm run start:dev`
+
+Visit `http://localhost:3000`
