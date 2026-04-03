@@ -23,6 +23,9 @@ export class Message {
   @JoinColumn({ name: 'sender_id' })
   sender!: User;
 
+  @Column({ name: 'sender_id' })
+  senderId!: number;
+
   @Column({ name: 'message_body', type: 'text' })
   messageBody!: string;
 

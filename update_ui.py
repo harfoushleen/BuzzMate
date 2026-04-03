@@ -1,278 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>BuzzMate</title>
-  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-  <link rel="stylesheet" href="styles-tailwind.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
-  
-  <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .honey-gradient { background: radial-gradient(circle at top left, #fdc003, #755700); }
-    .glass-panel { background: rgba(253, 246, 223, 0.05); backdrop-filter: blur(20px); }
-    input:focus, select:focus { outline: none; box-shadow: 0 0 0 4px rgba(253, 192, 3, 0.2); }
-    /* Nav active state override */
-    .nav-item.active { background-color: #e4ddc0; color: #322f20; font-weight: 700; }
-    .hexagon-mask { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+import os
+
+with open('public/index.html', 'r', encoding='utf-8') as f:
+    html = f.read()
+
+styles_addition = """    .hexagon-mask { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
     .liquid-nectar-gradient { background: radial-gradient(circle at top left, #fdc003 0%, #755700 100%); }
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e4ddc0; border-radius: 10px; }
     .honeycomb-pattern { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='42' viewBox='0 0 24 42'%3E%3Cpath fill='%23755700' fill-opacity='0.03' d='M12 0l12 6.928v13.856L12 27.712 0 20.784V6.928L12 0zm0 41.568l12-6.928V20.784L12 27.712l-12-6.928v13.856l12 6.928z'/%3E%3C/svg%3E"); }
-    
-    @media (min-width: 768px) {
-      #page-chats { flex-direction: row !important; }
-    }
-  </style>
-</head>
-<body class="bg-surface font-body text-on-surface antialiased min-h-screen">
+  </style>"""
+if '.hexagon-mask' not in html:
+    html = html.replace('  </style>', styles_addition)
 
-  <!-- ================= LANDING / LOGIN PAGE ================= -->
-  <section id="page-landing" class="page bg-surface min-h-screen flex items-center justify-center selection:bg-primary-container selection:text-on-primary-container overflow-hidden active">
-    <!-- Subtle Background Texture -->
-    <div class="fixed inset-0 opacity-10 pointer-events-none bg-surface-container-low">
-      <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern height="100" id="honeycomb-landing" patterntransform="scale(1.5)" patternunits="userSpaceOnUse" width="56" x="0" y="0">
-            <path d="M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100" fill="none" stroke="#755700" stroke-width="1"></path>
-          </pattern>
-        </defs>
-        <rect fill="url(#honeycomb-landing)" height="100%" width="100%"></rect>
-      </svg>
-    </div>
-    <main class="relative w-full max-w-md px-8 py-12 flex flex-col items-center justify-center gap-12 z-10">
-      <div class="flex flex-col items-center space-y-4">
-        <div class="w-20 h-20 rounded-xl bg-surface-container-highest flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-5xl text-primary" style='font-variation-settings: "FILL" 1;'>hive</span>
-        </div>
-        <div class="text-center">
-          <h1 class="font-headline font-extrabold text-4xl tracking-tight text-on-surface">BuzzMate</h1>
-          <p class="font-body text-secondary mt-2 tracking-wide font-medium">a matchmaking system</p>
-        </div>
-      </div>
-      <div class="w-full bg-surface-container-lowest/40 backdrop-blur-xl p-8 rounded-xl space-y-8 shadow-[0_32px_64px_-12px_rgba(50,47,32,0.06)]">
-        <form onsubmit="event.preventDefault(); submitAuth('login');" class="space-y-6">
-          <div class="space-y-2">
-            <label class="font-label text-sm font-semibold text-secondary px-2" for="auth-email-login">email</label>
-            <div class="relative group">
-              <input class="w-full px-6 py-4 rounded-lg bg-surface-container-lowest border-none ring-0 focus:ring-4 focus:ring-primary-container/20 transition-all duration-300 placeholder:text-outline-variant text-on-surface font-medium" id="auth-email-login" placeholder="Enter your email" type="email" required/>
-              <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none opacity-40 group-focus-within:opacity-100 transition-opacity">
-                <span class="material-symbols-outlined text-primary">mail</span>
-              </div>
-            </div>
-          </div>
-          <button type="submit" class="w-full py-4 rounded-full bg-gradient-to-br from-primary-fixed to-primary text-on-primary-fixed font-headline font-bold text-lg shadow-[0_8px_32px_rgba(117,87,0,0.15)] hover:shadow-[0_12px_48px_rgba(117,87,0,0.25)] active:scale-95 transition-all duration-300">Log In</button>
-        </form>
-        <div class="text-center">
-          <p class="font-label text-xs text-secondary/70">New to the hive? <a class="text-primary font-bold hover:underline underline-offset-4 decoration-2" href="#" onclick="openAuthOverlay('signup'); return false;">Create a profile</a></p>
-        </div>
-      </div>
-    </main>
-  </section>
-
-  <!-- ================= SIGN UP / ONBOARDING PAGE ================= -->
-  <section id="page-signup" class="page hidden bg-surface min-h-screen w-full overflow-hidden flex">
-    <section class="hidden lg:flex lg:w-1/2 relative bg-surface-container-low items-center justify-center p-12 overflow-hidden">
-      <!-- Background Honeycomb ... -->
-      <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs><pattern height="100" id="honeycomb-signup" patterntransform="scale(1.5)" patternunits="userSpaceOnUse" width="56" x="0" y="0"><path d="M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100" fill="none" stroke="#755700" stroke-width="1"></path></pattern></defs>
-          <rect fill="url(#honeycomb-signup)" height="100%" width="100%"></rect>
-        </svg>
-      </div>
-      <div class="relative z-10 flex flex-col items-center text-center max-w-lg">
-        <h1 class="font-headline text-5xl font-black text-primary tracking-tight leading-tight mb-4 flex items-center justify-center"><span class="material-symbols-outlined mr-3 text-4xl align-middle" style="font-variation-settings: 'FILL' 1;">hive</span>BuzzMate</h1>
-        <p class="text-secondary text-lg leading-relaxed px-8">matchmaking system</p>
-      </div>
-      <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-primary-fixed opacity-10 rounded-full blur-3xl"></div>
-      <div class="absolute -top-24 -right-24 w-64 h-64 bg-tertiary-fixed opacity-10 rounded-full blur-3xl"></div>
-    </section>
-    
-    <section class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 md:p-16 bg-surface overflow-y-auto">
-      <div class="w-full max-w-xl">
-        <div class="mb-10 text-center lg:text-left mt-8">
-          <h2 class="font-headline text-3xl font-bold text-on-surface mb-2">Create Your Profile</h2>
-          <p class="text-secondary">Already a member? <a class="text-primary font-bold hover:underline" href="#" onclick="openAuthOverlay('login'); return false;">Log in to your hive</a></p>
-        </div>
-        
-        <form id="signup-form" onsubmit="event.preventDefault(); submitAuth('signup');" class="space-y-8 pb-12">
-          
-          <div class="space-y-6">
-            <h3 class="font-headline text-sm font-extrabold uppercase tracking-widest text-primary-dim">The Basics</h3>
-            <div class="space-y-2 mb-6">
-              <label class="block text-sm font-bold text-on-surface px-1">Email Address</label>
-              <div class="relative">
-                <input id="auth-email-signup" class="w-full bg-surface-container-lowest border-none h-14 px-6 rounded-lg text-on-surface-variant placeholder:text-outline-variant" placeholder="honey@buzzmate.com" type="email" required/>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label class="block text-sm font-bold text-on-surface px-1">Full Name</label>
-                <input id="auth-name" class="w-full bg-surface-container-lowest border-none h-14 px-6 rounded-lg text-on-surface-variant placeholder:text-outline-variant" placeholder="Honey Bee" type="text" required/>
-              </div>
-              <div class="space-y-2">
-                <label class="block text-sm font-bold text-on-surface px-1">Age (18+)</label>
-                <input id="auth-age" class="w-full bg-surface-container-lowest border-none h-14 px-6 rounded-lg text-on-surface-variant" min="18" placeholder="24" type="number" required/>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <label class="block text-sm font-bold text-on-surface px-1">Gender</label>
-                <select id="auth-gender" class="w-full bg-surface-container-lowest border-none h-14 px-6 rounded-lg text-on-surface-variant appearance-none">
-                  <option value="other">Select Gender</option>
-                  <option value="female">Woman</option>
-                  <option value="male">Man</option>
-                  <option value="other">Non-binary</option>
-                </select>
-              </div>
-              <div class="space-y-2">
-                <label class="block text-sm font-bold text-on-surface px-1">Occupation</label>
-                <input id="auth-occupation" class="w-full bg-surface-container-lowest border-none h-14 px-6 rounded-lg text-on-surface-variant" placeholder="Apiarist, Designer..." type="text"/>
-              </div>
-            </div>
-          </div>
-          
-          <div class="space-y-6 pt-4">
-            <h3 class="font-headline text-sm font-extrabold uppercase tracking-widest text-primary-dim">Intentions</h3>
-            <div class="space-y-4">
-              <label class="block text-sm font-bold text-on-surface px-1">Dating Preference</label>
-              <input type="hidden" id="auth-dating-preference" value="casual" />
-              <div class="flex flex-wrap gap-3" id="dating-pref-container">
-                <button class="dating-btn px-6 py-3 rounded-full bg-tertiary-container text-on-tertiary-container font-bold shadow-sm transition-transform active:scale-95" type="button" data-val="casual" onclick="setDatingPref('casual', this)">Casual</button>
-                <button class="dating-btn px-6 py-3 rounded-full bg-surface-container-highest text-secondary hover:bg-surface-container-high transition-colors" type="button" data-val="long term" onclick="setDatingPref('long term', this)">Long Term</button>
-                <button class="dating-btn px-6 py-3 rounded-full bg-surface-container-highest text-secondary hover:bg-surface-container-high transition-colors" type="button" data-val="unsure" onclick="setDatingPref('unsure', this)">Unsure</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: Connectivity -->
-          <div class="space-y-6 pt-4">
-            <h3 class="font-headline text-sm font-extrabold uppercase tracking-widest text-primary-dim">Hive Details</h3>
-            <div class="space-y-2">
-              <label class="block text-sm font-bold text-on-surface px-1">Address</label>
-              <div class="relative">
-                <input id="auth-address" class="w-full bg-surface-container-lowest border-none h-14 pl-12 pr-6 rounded-lg text-on-surface-variant" placeholder="123 Honeycomb Way" type="text"/>
-                <span class="material-symbols-outlined absolute left-4 top-4 text-outline">location_on</span>
-              </div>
-            </div>
-            <div class="space-y-2">
-              <label class="block text-sm font-bold text-on-surface px-1">Phone Number</label>
-              <div class="relative">
-                <input id="auth-phone" class="w-full bg-surface-container-lowest border-none h-14 pl-12 pr-6 rounded-lg text-on-surface-variant" placeholder="+1 (555) 000-0000" type="tel"/>
-                <span class="material-symbols-outlined absolute left-4 top-4 text-outline">call</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 4: Media & Privacy -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-            <div class="space-y-4">
-              <label class="block text-sm font-bold text-on-surface px-1">Profile Picture</label>
-              <div class="w-full h-40 rounded-xl bg-surface-container-high border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-secondary cursor-pointer hover:bg-surface-container-highest transition-colors" onclick="document.getElementById('auth-profile-pic').click()">
-                <span class="material-symbols-outlined text-4xl mb-2">add_a_photo</span>
-                <span class="text-xs font-medium">Upload sweet photo</span>
-                <input type="file" id="auth-profile-pic" class="hidden" accept="image/*" onchange="uploadProfilePicOnboarding()">
-              </div>
-            </div>
-            <div class="space-y-4">
-              <label class="block text-sm font-bold text-on-surface px-1">Privacy Setting</label>
-              <div class="bg-surface-container-low p-4 rounded-xl space-y-3">
-                <label class="flex items-center gap-3 cursor-pointer group">
-                  <input checked="" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant" name="privacy" type="radio" value="public" id="auth-privacy-public"/>
-                  <div class="flex flex-col">
-                    <span class="text-sm font-bold">Public Hive</span>
-                    <span class="text-xs text-secondary">Discoverable by everyone</span>
-                  </div>
-                </label>
-                <label class="flex items-center gap-3 cursor-pointer group">
-                  <input class="w-5 h-5 text-primary focus:ring-primary border-outline-variant" name="privacy" type="radio" value="private" id="auth-privacy-private"/>
-                  <div class="flex flex-col">
-                    <span class="text-sm font-bold">Private Cell</span>
-                    <span class="text-xs text-secondary">Only visible to matches</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="pt-4">
-            <button class="w-full flex items-center justify-center gap-3 h-14 bg-surface-container-highest hover:bg-surface-container-high text-on-surface font-bold rounded-full transition-all active:scale-95 shadow-sm border border-outline-variant/20" type="button" onclick="connectGoogleCalendarOnboarding()">
-              <span class="material-symbols-outlined text-primary">calendar_month</span>
-              Connect your Calendar
-            </button>
-          </div>
-
-          <div class="pt-8 flex flex-col sm:flex-row gap-4">
-            <button type="submit" class="flex-1 honey-gradient h-14 rounded-full text-on-primary-fixed font-bold text-lg shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 group">
-              Next Step
-              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </button>
-          </div>
-          <p class="text-[10px] text-center text-outline uppercase tracking-widest font-bold"><br/></p>
-        </form>
-      </div>
-    </section>
-  </section>
-
-  <!-- ================= MAIN APP ================= -->
-  <div id="main-app" class="hidden h-screen w-full flex overflow-hidden">
-    <!-- Navbar (Sidebar) -->
-    <aside class="w-64 bg-surface-container-low flex flex-col border-r border-outline-variant shrink-0">
-      <div class="flex flex-col h-full justify-between">
-        <div>
+logo_addition = """        <div>
            <div class="px-6 pt-6 pb-2 text-center flex items-center justify-center gap-2">
              <span class="material-symbols-outlined text-3xl text-[#755700] font-black" style="font-variation-settings: 'FILL' 1;">hive</span>
              <h2 class="text-2xl font-black text-[#755700] font-['Plus_Jakarta_Sans']">BuzzMate</h2>
            </div>
-           <!-- Profile Top Box -->
-           <div class="p-6 border-b border-outline-variant flex flex-col items-center pb-6">
-               <img id="sidebar-img" src="/assets/BeeProfileIcon.png" class="w-24 h-24 rounded-full border-4 border-primary-fixed mb-3 object-cover shadow-md" />
-               <h2 id="sidebar-name" class="font-headline font-bold text-lg text-on-surface text-center leading-tight">New Bee, 24</h2>
-               <p id="sidebar-occ" class="text-sm text-secondary font-medium mt-1">Just joined</p>
-               <p id="sidebar-bio" class="text-xs text-secondary mt-3 text-center italic bg-surface-container p-2 rounded-lg w-full line-clamp-2">Passionate about finding my match!</p>
-           </div>
-           
-           <!-- Navigation Links ("Profile","Preferences","Discover","Messages","Calendar") -->
-           <nav class="flex flex-col gap-2 p-4 mt-2">
-              <button data-page="profile" class="nav-item flex items-center gap-3 w-full text-left p-3 rounded-lg text-secondary hover:bg-surface-container-highest hover:text-on-surface transition-colors font-medium">
-                <span class="material-symbols-outlined">person</span> Profile
-              </button>
-              <button data-page="preferences" class="nav-item flex items-center gap-3 w-full text-left p-3 rounded-lg text-secondary hover:bg-surface-container-highest hover:text-on-surface transition-colors font-medium">
-                <span class="material-symbols-outlined">tune</span> Preferences
-              </button>
-              <button data-page="discover" class="nav-item flex items-center gap-3 w-full text-left p-3 rounded-lg text-secondary hover:bg-surface-container-highest hover:text-on-surface transition-colors font-medium active">
-                <span class="material-symbols-outlined">explore</span> Discover
-              </button>
-              <button data-page="chats" class="nav-item flex items-center gap-3 w-full text-left p-3 rounded-lg text-secondary hover:bg-surface-container-highest hover:text-on-surface transition-colors font-medium">
-                <span class="material-symbols-outlined">chat</span> Messages
-              </button>
-              <button data-page="calendar" class="nav-item flex items-center gap-3 w-full text-left p-3 rounded-lg text-secondary hover:bg-surface-container-highest hover:text-on-surface transition-colors font-medium">
-                <span class="material-symbols-outlined">calendar_month</span> Calendar
-              </button>
-           </nav>
-        </div>
-        
-        <!-- Logout Bottom Left Corner -->
-        <div class="p-4 border-t border-outline-variant">
-           <button onclick="logoutUser()" class="nav-item logout flex items-center gap-3 w-full text-left p-3 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors font-bold">
-              <span class="material-symbols-outlined">logout</span> Logout
-           </button>
-        </div>
-      </div>
-    </aside>
+           <!-- Profile Top Box -->"""
+if 'text-3xl text-[#755700]' not in html:
+    html = html.replace('        <div>\n           <!-- Profile Top Box -->', logo_addition)
 
-    <!-- Main App Content Container -->
-    <main class="flex-1 bg-surface relative overflow-y-auto">
-      <div class="w-full h-full" id="pages-container">
-         
-         <!-- DISCOVER -->
+html = html.replace('<div class="mx-auto max-w-4xl p-8" id="pages-container">', '<div class="w-full h-full" id="pages-container">')
+
+new_discover = """         <!-- DISCOVER -->
          <section id="page-discover" class="page w-full min-h-screen p-8 lg:p-12">
             <!-- Header Section -->
             <header class="mb-12">
@@ -296,11 +48,11 @@
                     </div>
                     <div class="relative z-10 hidden md:flex gap-2">
                         <div class="bg-surface-container-lowest/40 backdrop-blur-md rounded-lg px-4 py-2 text-center min-w-[60px]">
-                            <span class="block text-xl font-bold" id="regen-days">05</span>
+                            <span class="block text-xl font-bold">05</span>
                             <span class="text-[10px] uppercase tracking-wider">Days</span>
                         </div>
                         <div class="bg-surface-container-lowest/40 backdrop-blur-md rounded-lg px-4 py-2 text-center min-w-[60px]">
-                            <span class="block text-xl font-bold" id="regen-hrs">14</span>
+                            <span class="block text-xl font-bold">14</span>
                             <span class="text-[10px] uppercase tracking-wider">Hrs</span>
                         </div>
                     </div>
@@ -319,12 +71,6 @@
          <section id="page-chats" class="page flex-1 flex flex-col md:flex-row h-full">
             <!-- Left Pane: Conversation List -->
             <div class="w-full md:w-96 flex flex-col bg-surface-container-low overflow-hidden border-r border-outline-variant h-full">
-                <div class="px-6 py-4 flex items-center justify-between">
-                    <h3 class="text-[11px] font-extrabold uppercase tracking-[0.15em] text-secondary">Recent Chats</h3>
-                    <button class="text-secondary hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined text-[20px]">filter_list</span>
-                    </button>
-                </div>
                 <!-- Chat List -->
                 <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 pt-4" id="chat-list">
                     <!-- Dynamic List -->
@@ -336,7 +82,7 @@
                 <div class="px-8 py-4 bg-surface-bright flex items-center justify-between shadow-sm z-10 border-b border-outline-variant">
                     <div class="flex items-center gap-4" id="chat-header-info">
                         <div class="w-12 h-12 hexagon-mask bg-primary p-0.5">
-                            <img src="/assets/BeeProfileIcon.png" class="w-full h-full object-cover hexagon-mask" id="active-chat-img">
+                            <img src="https://i.pravatar.cc/150" class="w-full h-full object-cover hexagon-mask" id="active-chat-img">
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-on-surface leading-tight" id="active-chat-name">Select a Chat</h3>
@@ -353,23 +99,17 @@
                     <div class="flex justify-center my-4">
                         <span class="px-4 py-1 bg-surface-container-high rounded-full text-[10px] font-bold text-secondary uppercase tracking-widest">Matched today</span>
                     </div>
-                    <div id="messages-container" class="flex flex-col space-y-4 w-full">
+                    <div id="messages-container" class="space-y-4">
                         <p class="text-center text-secondary italic">Select a conversation to start messaging!</p>
                     </div>
                 </div>
                 <!-- Chat Input -->
                 <div class="p-6 bg-surface-bright border-t border-outline-variant">
-                    <div class="max-w-4xl mx-auto flex items-center gap-4 bg-surface-container-lowest p-2 rounded-full shadow-lg shadow-on-surface/5 border border-outline-variant/30">
-                        <button class="w-10 h-10 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container hover:text-primary transition-colors ml-1 border border-outline-variant/30">
-                            <span class="material-symbols-outlined text-[20px]">add</span>
-                        </button>
-                        <input id="chat-input-box" onkeypress="if(event.key === 'Enter') sendMessageContent()" class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-2 shadow-none outline-none" placeholder="Type a sweet message..." type="text">
+                    <div class="max-w-4xl mx-auto flex items-center gap-4 bg-surface-container-lowest p-2 rounded-full shadow-lg shadow-on-surface/5">
+                        <input class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-4 shadow-none" placeholder="Type a sweet message..." type="text">
                         <div class="flex items-center gap-2">
-                            <button class="w-10 h-10 flex items-center justify-center rounded-full text-secondary hover:text-primary transition-colors">
-                                <span class="material-symbols-outlined text-[24px]">mood</span>
-                            </button>
-                            <button onclick="sendMessageContent()" class="w-12 h-12 liquid-nectar-gradient text-white rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform">
-                                <span class="material-symbols-outlined text-[20px]" data-icon="send" style="font-variation-settings: 'FILL' 1;">send</span>
+                            <button class="w-12 h-12 liquid-nectar-gradient text-white rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform">
+                                <span class="material-symbols-outlined" data-icon="send" style="font-variation-settings: 'FILL' 1;">send</span>
                             </button>
                         </div>
                     </div>
@@ -635,82 +375,12 @@
                 </div>
             </form>
          </section>
-         <!-- PROFILE -->
-         <section id="page-profile" class="page w-full max-w-4xl mx-auto p-8">
-           <div class="header-section">
-             <h1 class="text-3xl font-bold font-headline">Edit Profile</h1>
-             <p class="text-secondary mt-1">Update your personal information.</p>
-           </div>
-           <form id="profile-form" class="form-container" style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border);">
-             <div class="form-group">
-               <label>Name</label>
-               <input type="text" id="name" placeholder="Your name" value="New Bee" />
-             </div>
-             <div class="form-group">
-               <label>Email</label>
-               <input type="email" id="email" placeholder="you@example.com" />
-             </div>
-             <div class="form-row">
-               <div class="form-group">
-                 <label>Age</label>
-                 <input type="number" id="age" min="18" max="120" value="24" />
-               </div>
-               <div class="form-group">
-                 <label>Dating preference</label>
-                 <select id="datingPreference">
-                   <option value="unsure">Unsure</option>
-                   <option value="casual">Casual</option>
-                   <option value="long term">Long term</option>
-                 </select>
-               </div>
-             </div>
-             <div class="form-group">
-               <label>Occupation</label>
-               <input type="text" id="occupation" placeholder="What do you do?" />
-             </div>
-             <div class="form-row">
-               <div class="form-group">
-                 <label>Address</label>
-                 <input type="text" id="address" placeholder="123 Honeycomb Way" />
-               </div>
-               <div class="form-group">
-                 <label>Phone Number</label>
-                 <input type="tel" id="phoneNumber" placeholder="+1 (555) 000-0000" />
-               </div>
-             </div>
-             <div class="form-group" style="width: 100%;">
-               <label>Privacy Setting</label>
-               <select id="privacySetting">
-                 <option value="public">Public Hive</option>
-                 <option value="private">Private Cell</option>
-               </select>
-             </div>
-             <div class="form-group" style="width: 100%;">
-               <label>Profile Picture</label>
-               <input type="file" id="profilePicInput" accept="image/*" class="mt-2" onchange="uploadProfilePic()" />
-             </div>
-             <div class="form-group" style="width: 100%;">
-               <button type="button" class="btn btn-primary bg-primary-container text-on-primary-container" onclick="connectGoogleCalendar()"><i class="fa fa-google mr-2"></i> Connect Google Calendar</button>
-             </div>
-             <button type="button" class="btn btn-primary" id="btn-save-profile" onclick="saveProfile()">Save Profile</button>
-           </form>
-         </section>
+"""
 
-      </div>
-    </main>
-  </div>
+start_idx = html.find('         <!-- DISCOVER -->')
+end_idx = html.find('         <!-- PROFILE -->')
+if start_idx != -1 and end_idx != -1:
+    html = html[:start_idx] + new_discover + '         <!-- PROFILE -->\n         <section id="page-profile" class="page w-full max-w-4xl mx-auto p-8">\n' + html[end_idx+35:]
 
-  <script src="app.js"></script>
-  <script>
-    function setDatingPref(val, btn) {
-      document.getElementById('auth-dating-preference').value = val;
-      // Reset all buttons visual state
-      document.querySelectorAll('.dating-btn').forEach(b => {
-        b.className = "dating-btn px-6 py-3 rounded-full bg-surface-container-highest text-secondary hover:bg-surface-container-high transition-colors";
-      });
-      // Set active visual state
-      btn.className = "dating-btn px-6 py-3 rounded-full bg-tertiary-container text-on-tertiary-container font-bold shadow-sm transition-transform active:scale-95";
-    }
-  </script>
-</body>
-</html>
+with open('public/index.html', 'w', encoding='utf-8') as f:
+    f.write(html)

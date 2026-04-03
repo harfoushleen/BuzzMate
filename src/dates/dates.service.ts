@@ -163,7 +163,7 @@ export class DatesService {
 
       const isDist = __dirname.includes('dist');
       const baseDir = isDist ? path.join(__dirname, '..', '..') : path.join(__dirname, '..', '..', 'src');
-
+//get matched users availabilities (between 9 am and 10pm ;from today till 2 weeks from now)
       const scriptPath = path.join(baseDir, 'PythonBackend', 'calendar_script.py');
       const { stdout } = await execAsync(`python "${scriptPath}" suggest`, {
         env: {

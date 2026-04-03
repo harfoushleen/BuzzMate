@@ -11,7 +11,7 @@ from typing import List, Tuple, Optional
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+#get matched users availabilities (between 9 am and 10pm ;from today till 2 weeks from now)
 TIME_ZONE_NAME = "Asia/Beirut"
 TZ = ZoneInfo(TIME_ZONE_NAME)
 

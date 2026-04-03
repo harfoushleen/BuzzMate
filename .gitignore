@@ -136,4 +136,4 @@ dist
 
 # Vite logs files
 vite.config.js.timestamp-*
-src/PythonBackend/credentials.json
+vite.config.ts.timestamp-*
