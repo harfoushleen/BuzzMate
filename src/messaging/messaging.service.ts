@@ -37,6 +37,11 @@ export class MessagingService {
     const convo = await this.getConversation(conversationId);
     const sender = await this.usersService.findOne(senderId);
 
+    // Prevent messaging in unmatched conversations
+    if (convo.match.status !== 'active') {
+      throw new ForbiddenException('This match has been dissolved');
+    }
+
     const otherUserId =
       convo.match.user1Id === senderId ? convo.match.user2Id : convo.match.user1Id;
 
@@ -78,7 +83,8 @@ export class MessagingService {
       .innerJoinAndSelect('c.match', 'm')
       .innerJoinAndSelect('m.user1', 'u1')
       .innerJoinAndSelect('m.user2', 'u2')
-      .where('m.user_1_id = :userId OR m.user_2_id = :userId', { userId })
+      .where('(m.user_1_id = :userId OR m.user_2_id = :userId)', { userId })
+      .andWhere('m.status = :status', { status: 'active' })
       .orderBy('c.conversation_id', 'DESC')
       .getMany();
   }

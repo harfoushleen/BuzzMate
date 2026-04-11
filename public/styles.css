@@ -99,3 +99,45 @@
 
 /* Utilities */
 .hidden { display: none !important; }
+
+/* Animations */
+@keyframes spin { to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 1s linear infinite; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+
+/* Report Modal */
+.report-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.report-modal-overlay.hidden { display: none !important; }
+.report-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(50, 47, 32, 0.5);
+  backdrop-filter: blur(4px);
+}
+.report-modal-content {
+  position: relative;
+  z-index: 1;
+  background: #fdf6df;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 32px 64px -12px rgba(50, 47, 32, 0.2);
+  border: 1px solid #e4ddc0;
+}
+
+/* Chat dropdown click-away */
+.chat-dropdown-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}

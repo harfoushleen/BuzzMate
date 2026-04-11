@@ -120,7 +120,7 @@ CREATE TABLE Suggested_Dates (
     suggestion_id INT AUTO_INCREMENT PRIMARY KEY,
     match_id INT NOT NULL,
     location_id INT NOT NULL,
-    status ENUM('suggested','accepted_by_user_1','accepted_by_user_2','accepted_by_both') DEFAULT 'suggested',
+    status ENUM('suggested','accepted_by_user_1','accepted_by_user_2','accepted_by_both','declined') DEFAULT 'suggested',
     scheduled_start DATETIME,
     scheduled_end DATETIME,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -6,12 +6,17 @@ import { ModerationService } from './moderation.service';
 import { ModerationController } from './moderation.controller';
 import { UsersModule } from '../users/users.module';
 import { DiscoverModule } from '../discover/discover.module';
+import { MatchesModule } from '../matches/matches.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Block, Report]), UsersModule, forwardRef(() => DiscoverModule)],
+  imports: [
+    TypeOrmModule.forFeature([Block, Report]),
+    UsersModule,
+    forwardRef(() => DiscoverModule),
+    forwardRef(() => MatchesModule),
+  ],
   providers: [ModerationService],
   controllers: [ModerationController],
   exports: [ModerationService],
 })
 export class ModerationModule {}
-

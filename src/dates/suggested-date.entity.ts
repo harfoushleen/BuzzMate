@@ -26,10 +26,10 @@ export class SuggestedDate {
   @Column({
     name: 'status',
     type: 'enum',
-    enum: ['suggested', 'accepted_by_user_1', 'accepted_by_user_2', 'accepted_by_both'],
+    enum: ['suggested', 'accepted_by_user_1', 'accepted_by_user_2', 'accepted_by_both', 'declined'],
     default: 'suggested',
   })
-  status!: 'suggested' | 'accepted_by_user_1' | 'accepted_by_user_2' | 'accepted_by_both';
+  status!: 'suggested' | 'accepted_by_user_1' | 'accepted_by_user_2' | 'accepted_by_both' | 'declined';
 
   @Column({ name: 'scheduled_start', type: 'datetime', nullable: true })
   scheduledStart?: Date;

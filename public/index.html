@@ -274,6 +274,13 @@
          
          <!-- DISCOVER -->
          <section id="page-discover" class="page w-full min-h-screen p-8 lg:p-12">
+            <!-- Regenerate Toast Notification -->
+            <div id="regen-toast" class="fixed top-8 left-1/2 transform -translate-x-1/2 z-[100] honey-gradient text-on-primary font-body px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-500 opacity-0 pointer-events-none translate-y-[-20px] max-w-sm w-max">
+                <span class="font-bold">✨ New matches just dropped</span>
+                <button type="button" onclick="hideRegenToast()" class="flex items-center ml-4 opacity-80 hover:opacity-100 transition-opacity">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+            </div>
             <!-- Header Section -->
             <header class="mb-12">
                 <div class="flex justify-between items-end mb-8">
@@ -320,18 +327,22 @@
             <!-- Left Pane: Conversation List -->
             <div class="w-full md:w-96 flex flex-col bg-surface-container-low overflow-hidden border-r border-outline-variant h-full">
                 <div class="px-6 py-4 flex items-center justify-between">
-                    <h3 class="text-[11px] font-extrabold uppercase tracking-[0.15em] text-secondary">Recent Chats</h3>
-                    <button class="text-secondary hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined text-[20px]">filter_list</span>
-                    </button>
+                    <div class="flex items-center gap-1 bg-surface-container-high rounded-full p-1">
+                        <button id="tab-chats" onclick="switchChatTab('chats')" class="px-4 py-1.5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.1em] transition-all bg-primary-container text-on-primary-container shadow-sm">Chats</button>
+                        <button id="tab-blocked" onclick="switchChatTab('blocked')" class="px-4 py-1.5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.1em] transition-all text-secondary hover:text-on-surface">Blocked</button>
+                    </div>
                 </div>
                 <!-- Chat List -->
-                <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 pt-4" id="chat-list">
+                <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 pt-2" id="chat-list">
+                    <!-- Dynamic List -->
+                </div>
+                <!-- Blocked Users List (hidden by default) -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 pt-2 hidden" id="blocked-list">
                     <!-- Dynamic List -->
                 </div>
             </div>
             <!-- Right Pane: Active Chat Window -->
-            <div class="hidden md:flex flex-1 flex-col bg-surface overflow-hidden h-full">
+            <div class="hidden md:flex flex-1 flex-col bg-surface h-full">
                 <!-- Chat Header -->
                 <div class="px-8 py-4 bg-surface-bright flex items-center justify-between shadow-sm z-10 border-b border-outline-variant">
                     <div class="flex items-center gap-4" id="chat-header-info">
@@ -343,7 +354,7 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors text-primary">
+                        <button id="chat-menu-btn" onclick="toggleChatMenu(event)" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors text-primary">
                             <span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
                         </button>
                     </div>
@@ -378,26 +389,33 @@
          </section>
 
          <!-- CALENDAR -->
-         <section id="page-calendar" class="page w-full p-8">
+         <section id="page-calendar" class="page w-full p-8 lg:p-10">
             <div class="max-w-7xl mx-auto grid grid-cols-12 gap-8">
-                <!-- Calendar Section -->
+                <!-- Calendar Section (Left Panel) -->
                 <div class="col-span-12 lg:col-span-8 space-y-6">
                     <!-- Calendar Header -->
                     <div class="flex items-center justify-between bg-surface-container-low p-6 rounded-xl">
                         <div class="flex items-center gap-6">
-                            <h2 class="text-3xl font-black text-primary tracking-tight">October 2023</h2>
+                            <h2 id="calendar-month-title" class="text-3xl font-black text-primary tracking-tight font-headline" style="font-style: italic;">April 2026</h2>
                             <div class="flex items-center gap-2">
-                                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-primary-container transition-colors">
+                                <button id="cal-prev-btn" onclick="navigateCalendarMonth(-1)" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-primary-container transition-colors active:scale-90">
                                     <span class="material-symbols-outlined">chevron_left</span>
                                 </button>
-                                <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-primary-container transition-colors">
+                                <button id="cal-next-btn" onclick="navigateCalendarMonth(1)" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-primary-container transition-colors active:scale-90">
                                     <span class="material-symbols-outlined">chevron_right</span>
                                 </button>
                             </div>
                         </div>
+                        <!-- Google Calendar Sync Badge -->
+                        <div id="gcal-sync-badge" class="hidden items-center gap-2 bg-surface-container-lowest px-4 py-2 rounded-full shadow-sm border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">event_available</span>
+                            <span class="text-xs font-bold text-secondary">Google Calendar Synced</span>
+                        </div>
                     </div>
-                    <!-- Monthly Grid (Placeholder Visual Grid) -->
+
+                    <!-- Monthly Grid -->
                     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+                        <!-- Day-of-week headers -->
                         <div class="grid grid-cols-7 bg-surface-container-low">
                             <div class="py-4 text-center text-xs font-bold uppercase tracking-widest text-secondary">Mon</div>
                             <div class="py-4 text-center text-xs font-bold uppercase tracking-widest text-secondary">Tue</div>
@@ -407,74 +425,31 @@
                             <div class="py-4 text-center text-xs font-bold uppercase tracking-widest text-secondary">Sat</div>
                             <div class="py-4 text-center text-xs font-bold uppercase tracking-widest text-secondary">Sun</div>
                         </div>
-                        <div class="grid grid-cols-7 auto-rows-[120px]">
-                            <div class="border-r border-b border-surface-container p-2 opacity-30">25</div>
-                            <div class="border-r border-b border-surface-container p-2 opacity-30">26</div>
-                            <div class="border-r border-b border-surface-container p-2 opacity-30">27</div>
-                            <div class="border-r border-b border-surface-container p-2 opacity-30">28</div>
-                            <div class="border-r border-b border-surface-container p-2 opacity-30">29</div>
-                            <div class="border-r border-b border-surface-container p-2 opacity-30">30</div>
-                            <div class="border-b border-surface-container p-2">1</div>
-                            <div class="border-r border-b border-surface-container p-2">2</div>
-                            <div class="border-r border-b border-surface-container p-2">3</div>
-                            <div class="border-r border-b border-surface-container p-2 bg-primary-container/10">
-                                <div class="flex justify-between items-start">
-                                    <span>4</span>
-                                </div>
-                                <div class="mt-2 bg-primary-container text-on-primary-container text-[10px] font-bold p-1 rounded-md truncate">Date w/ Sarah</div>
-                            </div>
-                            <div class="border-r border-b border-surface-container p-2">5</div>
-                            <div class="border-r border-b border-surface-container p-2">6</div>
-                            <div class="border-r border-b border-surface-container p-2">7</div>
-                            <div class="border-b border-surface-container p-2">8</div>
-                            <div class="border-r border-b border-surface-container p-2">9</div>
-                            <div class="border-r border-b border-surface-container p-2">10</div>
-                            <div class="border-r border-b border-surface-container p-2">11</div>
-                            <div class="border-r border-b border-surface-container p-2 bg-tertiary-container/10">
-                                <span>12</span>
-                                <div class="mt-2 bg-tertiary-container/30 text-on-tertiary-container text-[10px] font-bold p-1 rounded-md truncate border border-tertiary/20">Proposed: Coffee</div>
-                            </div>
-                            <div class="border-r border-b border-surface-container p-2">13</div>
-                            <div class="border-r border-b border-surface-container p-2">14</div>
-                            <div class="border-b border-surface-container p-2">15</div>
-                            
-                            <div class="border-r border-b border-surface-container p-2">16</div>
-                            <div class="border-r border-b border-surface-container p-2 font-black text-primary bg-surface-container-low">17<div class="mt-2 h-1 w-full bg-primary rounded-full"></div></div>
-                            <div class="border-r border-b border-surface-container p-2">18</div>
-                            <div class="border-r border-b border-surface-container p-2">19</div>
-                            <div class="border-r border-b border-surface-container p-2 bg-primary-container/10">
-                                <span>20</span>
-                                <div class="mt-2 bg-primary-container text-on-primary-container text-[10px] font-bold p-1 rounded-md truncate">Jazz Night w/ Leo</div>
-                            </div>
-                            <div class="border-r border-b border-surface-container p-2">21</div>
-                            <div class="border-b border-surface-container p-2">22</div>
-                            
-                            <div class="border-r border-surface-container p-2">23</div>
-                            <div class="border-r border-surface-container p-2">24</div>
-                            <div class="border-r border-surface-container p-2">25</div>
-                            <div class="border-r border-surface-container p-2">26</div>
-                            <div class="border-r border-surface-container p-2">27</div>
-                            <div class="border-r border-surface-container p-2">28</div>
-                            <div class="p-2">29</div>
+                        <!-- Dynamic calendar grid -->
+                        <div id="calendar-grid" class="grid grid-cols-7 auto-rows-[110px]">
+                            <!-- Populated by JS -->
                         </div>
                     </div>
                 </div>
-                <!-- Side Panels -->
+
+                <!-- Side Panels (Right) -->
                 <div class="col-span-12 lg:col-span-4 space-y-8">
-                    <!-- Confirmed Dates -->
+                    <!-- Confirmed Dates Section -->
                     <section>
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-bold text-on-surface">Confirmed Dates</h3>
-                        </div>
+                        <h3 class="text-xl font-bold text-on-surface mb-4 font-headline">Confirmed Dates</h3>
                         <div class="space-y-4" id="calendar-confirmed-list">
-                            <p class="text-secondary italic">Loading...</p>
+                            <div class="flex items-center justify-center py-8">
+                                <span class="material-symbols-outlined text-primary animate-spin text-3xl">progress_activity</span>
+                            </div>
                         </div>
                     </section>
-                    <!-- Proposed Dates -->
+                    <!-- Awaiting Confirmation Section -->
                     <section>
-                        <h3 class="text-xl font-bold text-on-surface mb-4">Awaiting confirmation</h3>
+                        <h3 class="text-xl font-bold text-on-surface mb-4 font-headline">Awaiting confirmation</h3>
                         <div class="space-y-4" id="calendar-awaiting-list">
-                            <p class="text-secondary italic">Loading...</p>
+                            <div class="flex items-center justify-center py-8">
+                                <span class="material-symbols-outlined text-primary animate-spin text-3xl">progress_activity</span>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -712,5 +687,42 @@
       btn.className = "dating-btn px-6 py-3 rounded-full bg-tertiary-container text-on-tertiary-container font-bold shadow-sm transition-transform active:scale-95";
     }
   </script>
+  <!-- ================= REPORT MODAL ================= -->
+  <div id="report-modal" class="report-modal-overlay hidden">
+    <div class="report-modal-backdrop" onclick="closeReportModal()"></div>
+    <div class="report-modal-content animate-fade-in">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-error-container/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-error">flag</span>
+          </div>
+          <div>
+            <h3 class="font-headline font-bold text-lg text-on-surface">Report <span id="report-modal-name">User</span></h3>
+            <p class="text-xs text-secondary">Help keep the hive safe 🐝</p>
+          </div>
+        </div>
+        <button onclick="closeReportModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-secondary">close</span>
+        </button>
+      </div>
+      <div class="mb-4">
+        <p class="text-sm font-semibold text-on-surface mb-3">Why are you reporting?</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="report-quick-reasons">
+          <button type="button" onclick="setReportReason('Inappropriate behavior', this)" class="report-reason-btn px-4 py-2 rounded-full bg-surface-container-high text-secondary text-xs font-bold hover:bg-surface-variant transition-colors">Inappropriate behavior</button>
+          <button type="button" onclick="setReportReason('Fake profile', this)" class="report-reason-btn px-4 py-2 rounded-full bg-surface-container-high text-secondary text-xs font-bold hover:bg-surface-variant transition-colors">Fake profile</button>
+          <button type="button" onclick="setReportReason('Harassment', this)" class="report-reason-btn px-4 py-2 rounded-full bg-surface-container-high text-secondary text-xs font-bold hover:bg-surface-variant transition-colors">Harassment</button>
+          <button type="button" onclick="setReportReason('Spam', this)" class="report-reason-btn px-4 py-2 rounded-full bg-surface-container-high text-secondary text-xs font-bold hover:bg-surface-variant transition-colors">Spam</button>
+          <button type="button" onclick="setReportReason('Offensive content', this)" class="report-reason-btn px-4 py-2 rounded-full bg-surface-container-high text-secondary text-xs font-bold hover:bg-surface-variant transition-colors">Offensive content</button>
+        </div>
+        <textarea id="report-reason-input" class="w-full bg-surface-container-lowest border-2 border-outline-variant/30 rounded-xl p-4 text-sm text-on-surface placeholder:text-outline-variant resize-none focus:border-primary focus:ring-0 outline-none transition-colors" rows="3" placeholder="Tell us more about what happened..."></textarea>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="closeReportModal()" class="flex-1 py-3 rounded-full bg-surface-container-high text-secondary font-bold text-sm hover:bg-surface-variant transition-colors">Cancel</button>
+        <button id="report-submit-btn" onclick="submitReport()" class="flex-1 py-3 rounded-full bg-error text-on-error font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-sm">Report & Block</button>
+      </div>
+      <p class="text-[10px] text-outline text-center mt-4">Reporting will also block this user. They won't be able to contact you.</p>
+    </div>
+  </div>
+
 </body>
 </html>

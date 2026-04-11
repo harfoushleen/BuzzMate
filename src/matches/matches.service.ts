@@ -57,5 +57,29 @@ export class MatchesService {
       order: { matchedAt: 'DESC' },
     });
   }
+
+  async unmatchBetween(userId1: number, userId2: number): Promise<Match | null> {
+    const match = await this.matchRepo.findOne({
+      where: [
+        { user1Id: userId1, user2Id: userId2, status: 'active' },
+        { user1Id: userId2, user2Id: userId1, status: 'active' },
+      ],
+    });
+    if (!match) return null;
+    match.status = 'unmatched';
+    return this.matchRepo.save(match);
+  }
+
+  async rematchBetween(userId1: number, userId2: number): Promise<Match | null> {
+    const match = await this.matchRepo.findOne({
+      where: [
+        { user1Id: userId1, user2Id: userId2, status: 'unmatched' },
+        { user1Id: userId2, user2Id: userId1, status: 'unmatched' },
+      ],
+    });
+    if (!match) return null;
+    match.status = 'active';
+    return this.matchRepo.save(match);
+  }
 }
 

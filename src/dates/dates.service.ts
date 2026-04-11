@@ -127,7 +127,7 @@ export class DatesService {
     const isUser1 = match.user1Id === userId;
     const isUser2 = match.user2Id === userId;
     if (!isUser1 && !isUser2) throw new Error('User not part of this match');
-    suggestion.status = 'suggested'; // Reset to suggested so a new date can be proposed
+    suggestion.status = 'declined';
     return await this.suggestedDateRepo.save(suggestion);
   }
   async getDatesForUser(userId: number): Promise<SuggestedDate[]> {

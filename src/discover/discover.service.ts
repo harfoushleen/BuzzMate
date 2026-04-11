@@ -46,10 +46,10 @@ export class DiscoverService {
   }
 
   /** Hydrate candidate IDs into full User objects with their preferences (opener). */
-  async getCandidateProfiles(userId: number): Promise<User[]> {
+  async getCandidateProfiles(userId: number): Promise<{ candidates: User[], expiresAt: Date | null }> {
     const suggestion = await this.getSuggestionsForUser(userId);
     if (!suggestion || !suggestion.candidateIds || suggestion.candidateIds.length === 0) {
-      return [];
+      return { candidates: [], expiresAt: suggestion?.expiresAt || null };
     }
 
     const users = await this.userRepo.find({
@@ -63,10 +63,12 @@ export class DiscoverService {
     });
     const prefMap = new Map(prefs.map((p) => [p.user.userId, p]));
 
-    return users.map((u) => {
+    const candidates = users.map((u) => {
       (u as any).preferences = prefMap.get(u.userId) || null;
       return u;
     });
+
+    return { candidates, expiresAt: suggestion.expiresAt };
   }
 
   async regenerateForUser(userId: number): Promise<DiscoverSuggestion | null> {
