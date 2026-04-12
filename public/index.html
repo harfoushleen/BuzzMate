@@ -14,6 +14,8 @@
   <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .honey-gradient { background: radial-gradient(circle at top left, #fdc003, #755700); }
+    .toast-hidden { transform: translate(-50%, 20px); opacity: 0; pointer-events: none; }
+    .toast-visible { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
     .glass-panel { background: rgba(253, 246, 223, 0.05); backdrop-filter: blur(20px); }
     input:focus, select:focus { outline: none; box-shadow: 0 0 0 4px rgba(253, 192, 3, 0.2); }
     /* Nav active state override */
@@ -275,8 +277,8 @@
          <!-- DISCOVER -->
          <section id="page-discover" class="page w-full min-h-screen p-8 lg:p-12">
             <!-- Regenerate Toast Notification -->
-            <div id="regen-toast" class="fixed top-8 left-1/2 transform -translate-x-1/2 z-[100] honey-gradient text-on-primary font-body px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-500 opacity-0 pointer-events-none translate-y-[-20px] max-w-sm w-max">
-                <span class="font-bold">✨ New matches just dropped</span>
+            <div id="regen-toast" class="fixed bottom-8 left-1/2 static-transform z-[100] honey-gradient text-on-primary font-body px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-500 toast-hidden max-w-sm w-max">
+                <span id="regen-toast-text" class="font-bold">✨ The hive has regenerated</span>
                 <button type="button" onclick="hideRegenToast()" class="flex items-center ml-4 opacity-80 hover:opacity-100 transition-opacity">
                     <span class="material-symbols-outlined text-[16px]">close</span>
                 </button>

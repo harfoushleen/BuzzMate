@@ -579,11 +579,17 @@ window.handleToastScroll = function() {
     window.hideRegenToast();
 }
 
-window.showRegenToast = function() {
+window.showRegenToast = function(message) {
     const toast = document.getElementById('regen-toast');
     if (!toast) return;
-    toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
-    toast.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+    
+    if (message) {
+        const textSpan = toast.querySelector('span.font-bold');
+        if (textSpan) textSpan.innerText = message;
+    }
+    
+    toast.classList.remove('toast-hidden');
+    toast.classList.add('toast-visible');
     
     if (regenToastTimeout) clearTimeout(regenToastTimeout);
     regenToastTimeout = setTimeout(window.hideRegenToast, 5000);
@@ -595,8 +601,8 @@ window.showRegenToast = function() {
 window.hideRegenToast = function() {
     const toast = document.getElementById('regen-toast');
     if (!toast) return;
-    toast.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
-    toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+    toast.classList.remove('toast-visible');
+    toast.classList.add('toast-hidden');
     
     window.removeEventListener('scroll', window.handleToastScroll, true);
 }
@@ -1625,3 +1631,53 @@ function updateRegenerationTimer(expiresAtIso = null) {
 }
 setInterval(() => updateRegenerationTimer(), 1000 * 60 * 60);
 document.addEventListener('DOMContentLoaded', () => updateRegenerationTimer());
+
+// =============================================
+// MATCH MODAL LOGIC
+// =============================================
+
+window.currentMatchModalId = null;
+
+window.openMatchModal = function(theirName, theirAvatar, matchId) {
+  window.currentMatchModalId = matchId;
+  
+  const nameEl = document.getElementById('match-modal-name');
+  if (nameEl) nameEl.textContent = theirName;
+  
+  const theirAvatarEl = document.getElementById('match-modal-their-avatar');
+  if (theirAvatarEl) theirAvatarEl.src = theirAvatar;
+  
+  const myAvatarEl = document.getElementById('match-modal-my-avatar');
+  const myRealAvatar = document.getElementById('sidebar-img');
+  if (myAvatarEl && myRealAvatar) {
+    myAvatarEl.src = myRealAvatar.src || '/assets/BeeProfileIcon.png';
+  }
+  
+  const modal = document.getElementById('match-modal');
+  const card = document.getElementById('match-modal-card');
+  if (modal && card) {
+    modal.classList.remove('hidden');
+    // slight delay allows 'display' to take effect before animating
+    setTimeout(() => {
+      card.classList.add('modal-visible');
+    }, 50);
+  }
+};
+
+window.closeMatchModal = function() {
+  const modal = document.getElementById('match-modal');
+  const card = document.getElementById('match-modal-card');
+  if (modal && card) {
+    card.classList.remove('modal-visible');
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 450); 
+  }
+  window.currentMatchModalId = null;
+};
+
+window.goToMatchChat = function() {
+  window.closeMatchModal();
+  const btn = document.querySelector('[data-page="chats"]');
+  if (btn) btn.click();
+};
