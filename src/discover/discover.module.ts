@@ -10,9 +10,10 @@ import { DiscoverCron } from './discover.cron';
 import { User } from '../users/user.entity';
 import { Interaction } from '../interactions/interaction.entity';
 import { Block } from '../moderation/block.entity';
+import { Match } from '../matches/match.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DiscoverSuggestion, Preference, User, Interaction, Block]), UsersModule],
+  imports: [TypeOrmModule.forFeature([DiscoverSuggestion, Preference, User, Interaction, Block, Match]), UsersModule],
   providers: [DiscoverService, DiscoverCron],
   controllers: [DiscoverController],
   exports: [DiscoverService],

@@ -8,6 +8,7 @@ import { Preference } from '../preferences/preference.entity';
 import { User } from '../users/user.entity';
 import { Interaction } from '../interactions/interaction.entity';
 import { Block } from '../moderation/block.entity';
+import { Match } from '../matches/match.entity';
 
 @Injectable()
 export class DiscoverService {
@@ -28,6 +29,8 @@ export class DiscoverService {
     private readonly interactionRepo: Repository<Interaction>,
     @InjectRepository(Block)
     private readonly blockRepo: Repository<Block>,
+    @InjectRepository(Match)
+    private readonly matchRepo: Repository<Match>,
   ) {}
 
   async getSuggestionsForUser(userId: number): Promise<DiscoverSuggestion | null> {
@@ -52,6 +55,17 @@ export class DiscoverService {
       return { candidates: [], expiresAt: suggestion?.expiresAt || null };
     }
 
+    // Get IDs of users already actively matched with this user
+    const activeMatches = await this.matchRepo.find({
+      where: [
+        { user1Id: userId, status: 'active' },
+        { user2Id: userId, status: 'active' },
+      ],
+    });
+    const matchedIds = new Set(activeMatches.map(m =>
+      m.user1Id === userId ? m.user2Id : m.user1Id
+    ));
+
     const users = await this.userRepo.find({
       where: { userId: In(suggestion.candidateIds), accountStatus: 'active' },
     });
@@ -63,10 +77,12 @@ export class DiscoverService {
     });
     const prefMap = new Map(prefs.map((p) => [p.user.userId, p]));
 
-    const candidates = users.map((u) => {
-      (u as any).preferences = prefMap.get(u.userId) || null;
-      return u;
-    });
+    const candidates = users
+      .filter((u) => !matchedIds.has(u.userId))
+      .map((u) => {
+        (u as any).preferences = prefMap.get(u.userId) || null;
+        return u;
+      });
 
     return { candidates, expiresAt: suggestion.expiresAt };
   }
@@ -115,9 +131,26 @@ export class DiscoverService {
       .where('b2.blocker_id = :userId', { userId });
     qb.andWhere(`u.user_id NOT IN (${blockedSub.getQuery()})`);
 
+    // Exclude users already actively matched with the current user
+    const matchedAsUser1Sub = this.matchRepo
+      .createQueryBuilder('m1')
+      .select('m1.user_2_id')
+      .where('m1.user_1_id = :userId', { userId })
+      .andWhere(`m1.status = 'active'`);
+    qb.andWhere(`u.user_id NOT IN (${matchedAsUser1Sub.getQuery()})`);
+
+    const matchedAsUser2Sub = this.matchRepo
+      .createQueryBuilder('m2')
+      .select('m2.user_1_id')
+      .where('m2.user_2_id = :userId', { userId })
+      .andWhere(`m2.status = 'active'`);
+    qb.andWhere(`u.user_id NOT IN (${matchedAsUser2Sub.getQuery()})`);
+
     qb.setParameters(interactedSub.getParameters());
     qb.setParameters(blockedBySub.getParameters());
     qb.setParameters(blockedSub.getParameters());
+    qb.setParameters(matchedAsUser1Sub.getParameters());
+    qb.setParameters(matchedAsUser2Sub.getParameters());
 
     qb.limit(30);
 

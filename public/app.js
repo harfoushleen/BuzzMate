@@ -574,6 +574,7 @@ async function loadPreferences() {
 
 let windowLastRegenExpiresAt = null;
 let regenToastTimeout = null;
+let lastKnownExpiresAt = null;
 
 window.handleToastScroll = function() {
     window.hideRegenToast();
@@ -641,6 +642,7 @@ async function loadDiscover() {
     }
 
     if (serverExpiresAt) {
+      lastKnownExpiresAt = serverExpiresAt;
       updateRegenerationTimer(serverExpiresAt);
     }
     discoverCard.innerHTML = candidates.map(c => {
@@ -1629,8 +1631,8 @@ function updateRegenerationTimer(expiresAtIso = null) {
     }
   });
 }
-setInterval(() => updateRegenerationTimer(), 1000 * 60 * 60);
-document.addEventListener('DOMContentLoaded', () => updateRegenerationTimer());
+setInterval(() => updateRegenerationTimer(lastKnownExpiresAt || null), 1000 * 60 * 60);
+document.addEventListener('DOMContentLoaded', () => updateRegenerationTimer(lastKnownExpiresAt || null));
 
 // =============================================
 // MATCH MODAL LOGIC
