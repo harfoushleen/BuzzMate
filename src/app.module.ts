@@ -1,3 +1,5 @@
+import { DateFeedbackModule } from './date-feedback/date-feedback.module';
+import { DateFeedback } from './date-feedback/date-feedback.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -48,6 +50,7 @@ import { AppController } from './app.controller';
           Report,
           Conversation,
           Message,
+          DateFeedback,
         ],
         synchronize: false,
       }),
@@ -59,6 +62,7 @@ import { AppController } from './app.controller';
     DiscoverModule,
     DatesModule,
     MessagingModule,
+    DateFeedbackModule,
     ModerationModule,
   ],
   controllers: [AppController],
