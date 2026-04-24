@@ -908,6 +908,71 @@
  
     </div>
   </div>
+
+  <!-- ================= FEEDBACK MODAL ================= -->
+<div id="feedback-modal" class="hidden">
+  <div id="feedback-modal-backdrop" onclick="closeFeedbackModal()"></div>
+  <div id="feedback-modal-card">
+
+    <!-- Header -->
+    <div class="feedback-modal-header">
+      <h3> Rate Your Date</h3>
+      <p>with <span id="feedback-modal-name"></span></p>
+    </div>
+
+    <!-- Body -->
+    <div class="feedback-modal-body">
+
+      <!-- 1. Overall Rating -->
+      <div class="feedback-section">
+        <label>Overall Date Rating</label>
+        <div class="feedback-stars" id="feedback-stars-rating">
+          <span data-val="1" onclick="setFeedbackStar('feedback-stars-rating', 1)">★</span>
+          <span data-val="2" onclick="setFeedbackStar('feedback-stars-rating', 2)">★</span>
+          <span data-val="3" onclick="setFeedbackStar('feedback-stars-rating', 3)">★</span>
+          <span data-val="4" onclick="setFeedbackStar('feedback-stars-rating', 4)">★</span>
+          <span data-val="5" onclick="setFeedbackStar('feedback-stars-rating', 5)">★</span>
+        </div>
+      </div>
+
+      <!-- 2. Place Rating -->
+      <div class="feedback-section">
+        <label> Rate the Place</label>
+        <div class="feedback-stars" id="feedback-stars-place">
+          <span data-val="1" onclick="setFeedbackStar('feedback-stars-place', 1)">★</span>
+          <span data-val="2" onclick="setFeedbackStar('feedback-stars-place', 2)">★</span>
+          <span data-val="3" onclick="setFeedbackStar('feedback-stars-place', 3)">★</span>
+          <span data-val="4" onclick="setFeedbackStar('feedback-stars-place', 4)">★</span>
+          <span data-val="5" onclick="setFeedbackStar('feedback-stars-place', 5)">★</span>
+        </div>
+      </div>
+
+      <!-- 3. Go Again? -->
+      <div class="feedback-section">
+        <label> Would you go on another date?</label>
+        <div class="feedback-toggle">
+          <button id="feedback-go-yes" class="yes" onclick="setFeedbackGoAgain(true)">✅ Yes</button>
+          <button id="feedback-go-no"  class="no"  onclick="setFeedbackGoAgain(false)">❌ No</button>
+        </div>
+      </div>
+
+      <!-- 4. Comment -->
+      <div class="feedback-section">
+        <label> Comment <span style="font-weight:400;color:#9ca3af;">(optional)</span></label>
+        <textarea id="feedback-comment" rows="3" placeholder="How did it go?"></textarea>
+      </div>
+
+      <div id="feedback-message"></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="feedback-modal-footer">
+      <button id="feedback-submit-btn" onclick="submitFeedback()">Submit Feedback</button>
+      <button class="feedback-cancel-btn" onclick="closeFeedbackModal()">Cancel</button>
+    </div>
+
+  </div>
+</div>
  
 </body>
 </html>
