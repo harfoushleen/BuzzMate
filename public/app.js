@@ -180,7 +180,7 @@ window.openChat = async function (convId, name, img, otherUserId) {
 
     container.innerHTML = `
             <div class="flex justify-center my-4">
-                <span class="px-4 py-1 bg-surface-container-high rounded-full text-[10px] font-bold text-secondary uppercase tracking-widest">Matched recently</span>
+                <span class="px-4 py-1 bg-surface-container-high rounded-full text-[10px] font-bold text-secondary uppercase tracking-widest">Let's Chat</span>
             </div>
         `;
 
@@ -435,7 +435,8 @@ async function saveProfile() {
       await savePreferences(true);
       document.getElementById('sidebar-name').innerText = `${name}, ${age}`;
       document.getElementById('sidebar-occ').innerText = occupation;
-      alert("Profile created successfully!");
+      showRegenToast('✅ Profile created!');
+      setTimeout(() => document.querySelector('[data-page="discover"]').click(), 1200);
     } catch (e) { console.error(e); }
   } else {
     try {
@@ -448,7 +449,8 @@ async function saveProfile() {
       await loadCurrentUser();
       document.getElementById('sidebar-name').innerText = `${name}, ${age}`;
       document.getElementById('sidebar-occ').innerText = occupation;
-      alert("Profile updated successfully!");
+      showRegenToast('✅ Profile updated!');
+      setTimeout(() => document.querySelector('[data-page="discover"]').click(), 1200);
     } catch (err) {
       console.error(err);
       alert("Failed to save profile.");
@@ -559,7 +561,10 @@ async function savePreferences(silent = false) {
       body: JSON.stringify(preferences)
     });
     await loadPreferences();
-    if (!silent) alert("Preferences saved!");
+    if (!silent) {
+      showRegenToast('✅ Preferences saved!');
+      setTimeout(() => document.querySelector('[data-page="discover"]').click(), 1200);
+    }
   } catch (err) {
     console.error(err);
   }
@@ -1053,7 +1058,7 @@ window.toggleChatMenu = function (e) {
   const dropdown = document.createElement('div');
   dropdown.id = 'chat-menu-dropdown';
   dropdown.style.cssText = `position:fixed;z-index:9991;top:${rect.bottom + 8}px;right:${window.innerWidth - rect.right}px;`;
-  dropdown.className = 'w-56 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant/30 overflow-hidden animate-fade-in';
+  dropdown.className = 'w-56 bg-surface-container-lowest rounded-md shadow-xl border border-outline-variant/30 overflow-hidden animate-fade-in';
   dropdown.innerHTML = `
     <button onclick="openReportModal()" class="w-full flex items-center gap-3 px-5 py-3.5 text-left text-sm font-semibold text-on-surface hover:bg-error-container/10 hover:text-error transition-colors">
       <span class="material-symbols-outlined text-[20px]">flag</span>
