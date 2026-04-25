@@ -729,10 +729,10 @@ async function loadDiscover() {
         </div>` : '';
  
     return `
-    <article class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative">
+    <article class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.04] hover:z-10 transition-all duration-300 flex flex-col relative" style="will-change: transform;">
       ${swipedOverlay}
       <div class="relative h-72 overflow-hidden">
-          <img alt="${c.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="${c.profilePicUrl || '/assets/BeeProfileIcon.png'}">
+          <img alt="${c.name}" class="w-full h-full object-cover transition-transform duration-300" src="${c.profilePicUrl || '/assets/BeeProfileIcon.png'}">
           <div class="absolute bottom-4 left-4 right-4">
             <span class="bg-surface-container-lowest/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary flex items-center w-fit gap-1">
               
