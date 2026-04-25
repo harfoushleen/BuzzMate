@@ -12,7 +12,7 @@
     
 - Reporting, blocking, and banning (report_count + account_status)
 **Client UI:** Mobile App with 5 pages: **Calendar, Chats, Discover, Preferences,Profile**  
-**External systems (fixed scope):** **Google Calendar API**,OPTIONAL: **Google Maps API**  
+**External systems (fixed scope):** **Google Calendar API**
 **Data layer:** relational database with the provided tables.
   
 ## $\color{purple}{\text{ARCHITECTURE}}$
@@ -85,14 +85,12 @@ single backend deployment
 
 - Tables:
     
-    - `Users`, `Preferences`, `Interactions`, `Matches`, `Conversations`, `Messages`, `Reports`, `Blocks`, `Suggested_Dates`, `Locations`
+    - `Users`, `Preferences`, `Interactions`, `Matches`, `Conversations`, `Messages`, `Reports`, `Blocks`, `Suggested_Dates`, `Locations`, `Date_Feedback`
         
 
 #### External Systems
 
 - Google Calendar API (event creation/update for accepted date)
-    
-- OPTIONAL: Google Maps API (place lookup/details to populate Locations)
 
 
 <img width="1336" height="826" alt="model png" src="https://github.com/user-attachments/assets/3b492684-5abe-4350-9e6c-5f90f84890a9" />
@@ -102,8 +100,7 @@ single backend deployment
 
 **FRONTEND**:
 
--	1-React Native + TypeScript
--	2-OR **HTML, CSS, and JavaScript** ,that we already know about lowkey ,to build the frontend of a mobile app through a "Progressive Web App" or "Hybrid"
+-	**HTML, CSS, and JavaScript** to build the frontend of a mobile app through a "Progressive Web App" or "Hybrid"
 -	 --->web app that users "install" directly from their mobile browser without going through an app store.
 -	 --->or then "wrap" it in a native container so it can be installed from the **App Store** or **Google Play Store**(using **Ionic** for example)
 - **CHATTING SYSTEM**:  WebSocket (Socket.IO on Node)
