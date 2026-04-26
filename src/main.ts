@@ -7,8 +7,8 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: '*',
-    credentials: false,
+    origin: 'https://buzzmate-j57age6uu-harfoushleens-projects.vercel.app',
+    credentials: true,
   });
 
   app.useGlobalPipes(
