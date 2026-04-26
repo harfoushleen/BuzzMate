@@ -1,6 +1,6 @@
 let currentUserId = localStorage.getItem('currentUserId') || null;
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'https://buzzmate-production.up.railway.app';
 // Tracks which candidate userIds the current user has already swiped on
 // during this browser session (Map<targetUserId: number, action: 'like'|'dislike'>).
 // Cleared on page reload / new login. The backend has its own idempotency
