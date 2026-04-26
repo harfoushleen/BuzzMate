@@ -1,3 +1,14 @@
+# BuzzMate 🐝
+
+A matchmaking system by Team HINKS — Ahmad · Ayk · Garen · Leen · Maria
+
+## Live Demo
+👉 https://buzzmate-harfoushleens-projects.vercel.app
+
+## About
+BuzzMate bridges the virtual gap in modern dating apps by combining 
+preference-based matching with automated date planning.
+
 ![logo-HINK5](https://github.com/user-attachments/assets/87780418-2f1e-4970-9609-5da54b4a89a3)
 
 **System purpose (in-scope only):** a simple matchmaking app that supports:
